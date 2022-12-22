@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react'
-import { StyleSheet, View, Text, Animated, Pressable, Dimensions, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native'
 import { CircleList } from './circle/CircleList';
-import { horizontalScale as wp, verticalScale as hp } from './size';
 const { width, height } = Dimensions.get('window')
 
 const App = () => {
@@ -23,24 +22,32 @@ const App = () => {
     { id: 14, value: "ADA323", name: 'Football' },
     { id: 15, value: "D18572", name: 'Coding' },
     { id: 16, value: 'A341B9', name: 'Fitness' },
+
   ])
   const _keyExtractor = item => item.id
 
   const _renderItem = ({ item }) => {
     return (
-      <View style={styles.item}>
-        <Text>{item.name}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => console.log(item)}
+        style={styles.item}>
+        <Text>{item.id}</Text>
+      </TouchableOpacity>
     )
   }
 
   return (
-    <CircleList
-      height={height}
-      data={data}
-      keyExtractor={_keyExtractor}
-      renderItem={_renderItem}
-    />
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingTop: 100 }}>
+        <CircleList
+          data={data}
+          keyExtractor={_keyExtractor}
+          renderItem={_renderItem}
+          radius={(width) / 2}
+          height={height * 0.67}
+        />
+      </View>
+    </View>
   )
 }
 
@@ -48,9 +55,9 @@ export default App
 
 const styles = StyleSheet.create({
   item: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center'

@@ -1,6 +1,7 @@
 import React from 'react'
-import { Animated, StyleSheet, View } from 'react-native'
+import { Animated, StyleSheet, View, Dimensions } from 'react-native'
 import PropTypes from 'prop-types'
+const { width } = Dimensions.get('window')
 
 export const CircleListLayout = ({
   calcHeight,
@@ -11,8 +12,10 @@ export const CircleListLayout = ({
   renderItem,
   state,
   visibleDataBounds,
+  radius
 }) => (
   <View {...panHandlers} style={[styles.container, { height: calcHeight() }, containerStyle]}>
+    {/* <View style={styleCircle(radius).viewCircle} /> */}
     <View style={styles.wrapper}>
       {displayData.map((item, index) => {
         const scale = state[`scale${index}`]
@@ -20,7 +23,8 @@ export const CircleListLayout = ({
         const translateY = state[`translateY${index}`]
         const { _dataIndex, ...itemToRender } = item
         //transform: [{ translateX }, { translateY }, { scale }], //horizontal
-        //transform: [{ translateX: translateY }, { translateY: translateX }, { scale }], //vertical;
+        //transform: [{ translateX: translateY }, { translateY: translateX }, { scale }], //vertical-right;
+
         return (
           translateX &&
           translateY &&
@@ -31,7 +35,7 @@ export const CircleListLayout = ({
               style={[
                 styles.renderItemContainer,
                 {
-                  transform: [{ translateX }, { translateY }, { scale }],
+                  transform: [{ translateX: translateY }, { translateY: translateX }],
                 },
               ]}
             >
@@ -50,18 +54,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignSelf: 'stretch',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    paddingTop: width * 0.08,
   },
   renderItemContainer: {
     position: 'absolute',
+    top: width * 0.4
   },
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignSelf: 'stretch',
-    marginTop: 10,
+    marginTop: width * 0.0267
   },
 })
+
+const styleCircle = (radius) =>
+  StyleSheet.create({
+    viewCircle: {
+      width: radius * 2,
+      height: radius * 2,
+      borderRadius: radius,
+      position: 'absolute',
+      left: -radius,
+      top: width * 0.08,
+      backgroundColor: '#fff',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 7,
+      },
+      shadowOpacity: 0.43,
+      shadowRadius: 9.51,
+      elevation: 15,
+    }
+  })
 
 CircleListLayout.propTypes = {
   calcHeight: PropTypes.func.isRequired,
@@ -72,4 +99,5 @@ CircleListLayout.propTypes = {
   renderItem: PropTypes.func.isRequired,
   state: PropTypes.object,
   visibleDataBounds: PropTypes.array,
+  radius: PropTypes.number
 }

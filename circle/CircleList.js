@@ -34,6 +34,7 @@ export class CircleList extends PureComponent {
     selectedItemScale: PropTypes.number,
     swipeSpeedMultiplier: PropTypes.number,
     visibilityPadding: PropTypes.number,
+    height: PropTypes.number,
   }
 
   constructor(props) {
@@ -160,7 +161,7 @@ export class CircleList extends PureComponent {
           this.selectedIndex = newRotationIndex
 
           this._onScroll(this.dataIndex)
-
+          //-translateX : scroll on the left
           return displayData.forEach((_, index) => {
             const { translateX, translateY } = this._getTransforms(index)
 
@@ -197,6 +198,7 @@ export class CircleList extends PureComponent {
 
         const { selectedItemScale } = this.props
         const { breakpoints, displayData, rotationIndex, theta } = this.state
+        //scroll up,  down  (right: down, left: up)
         const direction = dx < 0 ? 'LEFT' : 'RIGHT'
         const selectedIndex = this._getClosestIndex(
           this.rotationOffset,
@@ -206,14 +208,14 @@ export class CircleList extends PureComponent {
         )
 
         // Only get snap animations if rotation index has changed
-        if (selectedIndex !== this.rotationIndex) {
+        if (selectedIndex !== rotationIndex) {
           // Calculate offset to snap to nearest index
           const snapOffset = 2 * PI - breakpoints[selectedIndex]
 
           this.rotationOffset = snapOffset
 
           this.setState({ rotationIndex: selectedIndex })
-
+          //caculator on end scroll
           const animations = displayData.map((_, index) => {
             const { translateX, translateY } = this._getTransforms(index)
 
@@ -260,10 +262,10 @@ export class CircleList extends PureComponent {
   }
 
   _calcHeight = () => {
-    const { radius } = this.props
+    const { radius, height } = this.props
     const { elementCount } = this.state
 
-    return ((12 / elementCount) * 1.8 * radius) / 2
+    return height || ((12 / elementCount) * 1.8 * radius) / 2
   }
 
   _getBreakpoints = (elementCount, separationAngle) => {
@@ -402,8 +404,8 @@ export class CircleList extends PureComponent {
     const translateX = radius * cos(index * theta + thetaOffset)
     const translateY =
       (1 - flatness) * radius * sin(index * theta + thetaOffset) + (1 - flatness) * radius
-
-    return { translateX, translateY }
+    //translateY: translateY: -translateY //vertical
+    return { translateX, translateY: -translateY }
   }
 
   _getVisibleElements = () => {
